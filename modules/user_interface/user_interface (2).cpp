@@ -173,6 +173,8 @@ static void userInterfaceDisplayUpdate()
 static void userInterfaceDisplayPasscode()
 {
     char passcodeString[4] = "";
+    char pressedKey = matrixKeypadUpdate();
+
     for (int i = 0; i < 4; i++){
         displayCharPositionWrite(i, 1);
         char pressedKey = matrixKeypadUpdate();
