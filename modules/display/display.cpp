@@ -75,6 +75,9 @@ DigitalOut displayEn( D9 );
 
 //=====[Declaration and initialization of private global variables]============
 
+static display_t display;
+static bool initial8BitCommunicationIsCompleted;
+
 //=====[Declarations (prototypes) of private functions]========================
 
 static void displayPinWrite( uint8_t pinName, int value );
@@ -83,8 +86,12 @@ static void displayCodeWrite( bool type, uint8_t dataBus );
 
 //=====[Implementations of public functions]===================================
 
-void displayInit()
+void displayInit( displayConnection_t connection )
 {
+    display.connection = connection;
+    
+    initial8BitCommunicationIsCompleted = false;    
+
     delay( 50 );
     
     displayCodeWrite( DISPLAY_RS_INSTRUCTION, 
@@ -102,12 +109,32 @@ void displayInit()
                       DISPLAY_IR_FUNCTION_SET_8BITS );
     delay( 1 );  
 
-    displayCodeWrite( DISPLAY_RS_INSTRUCTION, 
-                      DISPLAY_IR_FUNCTION_SET | 
-                      DISPLAY_IR_FUNCTION_SET_8BITS | 
-                      DISPLAY_IR_FUNCTION_SET_2LINES |
-                      DISPLAY_IR_FUNCTION_SET_5x8DOTS );
-    delay( 1 );         
+    switch( display.connection ) {
+        case DISPLAY_CONNECTION_GPIO_8BITS:
+            displayCodeWrite( DISPLAY_RS_INSTRUCTION, 
+                              DISPLAY_IR_FUNCTION_SET | 
+                              DISPLAY_IR_FUNCTION_SET_8BITS | 
+                              DISPLAY_IR_FUNCTION_SET_2LINES |
+                              DISPLAY_IR_FUNCTION_SET_5x8DOTS );
+            delay( 1 );         
+        break;
+        
+        case DISPLAY_CONNECTION_GPIO_4BITS:
+            displayCodeWrite( DISPLAY_RS_INSTRUCTION, 
+                              DISPLAY_IR_FUNCTION_SET | 
+                              DISPLAY_IR_FUNCTION_SET_4BITS );
+            delay( 1 );  
+
+            initial8BitCommunicationIsCompleted = true;  
+
+            displayCodeWrite( DISPLAY_RS_INSTRUCTION, 
+                              DISPLAY_IR_FUNCTION_SET | 
+                              DISPLAY_IR_FUNCTION_SET_4BITS | 
+                              DISPLAY_IR_FUNCTION_SET_2LINES |
+                              DISPLAY_IR_FUNCTION_SET_5x8DOTS );
+            delay( 1 );                                      
+        break;
+    }
 
     displayCodeWrite( DISPLAY_RS_INSTRUCTION, 
                       DISPLAY_IR_DISPLAY_CONTROL |
@@ -171,11 +198,17 @@ void displayCharPositionWrite( uint8_t charPositionX, uint8_t charPositionY )
     }
 }
 
+
 void displayStringWrite( const char * str )
 {
     while (*str) {
         displayCodeWrite(DISPLAY_RS_DATA, *str++);
     }
+}
+
+void clearScreen( void )
+{
+    displayCodeWrite( DISPLAY_RS_INSTRUCTION, DISPLAY_IR_CLEAR_DISPLAY );
 }
 
 //=====[Implementations of private functions]==================================
@@ -192,19 +225,35 @@ static void displayCodeWrite( bool type, uint8_t dataBus )
 
 static void displayPinWrite( uint8_t pinName, int value )
 {
-    switch( pinName ) {
-        case DISPLAY_PIN_D0: displayD0 = value;   break;
-        case DISPLAY_PIN_D1: displayD1 = value;   break;
-        case DISPLAY_PIN_D2: displayD2 = value;   break;
-        case DISPLAY_PIN_D3: displayD3 = value;   break;
-        case DISPLAY_PIN_D4: displayD4 = value;   break;
-        case DISPLAY_PIN_D5: displayD5 = value;   break;
-        case DISPLAY_PIN_D6: displayD6 = value;   break;
-        case DISPLAY_PIN_D7: displayD7 = value;   break;
-        case DISPLAY_PIN_RS: displayRs = value;   break;
-        case DISPLAY_PIN_EN: displayEn = value;   break;
-        case DISPLAY_PIN_RW: break; 
-        default: break;
+    switch( display.connection ) {
+        case DISPLAY_CONNECTION_GPIO_8BITS:
+            switch( pinName ) {
+                case DISPLAY_PIN_D0: displayD0 = value;   break;
+                case DISPLAY_PIN_D1: displayD1 = value;   break;
+                case DISPLAY_PIN_D2: displayD2 = value;   break;
+                case DISPLAY_PIN_D3: displayD3 = value;   break;
+                case DISPLAY_PIN_D4: displayD4 = value;   break;
+                case DISPLAY_PIN_D5: displayD5 = value;   break;
+                case DISPLAY_PIN_D6: displayD6 = value;   break;
+                case DISPLAY_PIN_D7: displayD7 = value;   break;
+                case DISPLAY_PIN_RS: displayRs = value;   break;
+                case DISPLAY_PIN_EN: displayEn = value;   break;
+                case DISPLAY_PIN_RW: break; 
+                default: break;
+            }
+            break;
+        case DISPLAY_CONNECTION_GPIO_4BITS:
+            switch( pinName ) {
+                case DISPLAY_PIN_D4: displayD4 = value;   break;
+                case DISPLAY_PIN_D5: displayD5 = value;   break;
+                case DISPLAY_PIN_D6: displayD6 = value;   break;
+                case DISPLAY_PIN_D7: displayD7 = value;   break;
+                case DISPLAY_PIN_RS: displayRs = value;   break;
+                case DISPLAY_PIN_EN: displayEn = value;   break;
+                case DISPLAY_PIN_RW: break; 
+                default: break;
+            }
+            break;
     }
 }
 
@@ -215,10 +264,28 @@ static void displayDataBusWrite( uint8_t dataBus )
     displayPinWrite( DISPLAY_PIN_D6, dataBus & 0b01000000 );
     displayPinWrite( DISPLAY_PIN_D5, dataBus & 0b00100000 );
     displayPinWrite( DISPLAY_PIN_D4, dataBus & 0b00010000 );
-    displayPinWrite( DISPLAY_PIN_D3, dataBus & 0b00001000 );
-    displayPinWrite( DISPLAY_PIN_D2, dataBus & 0b00000100 );  
-    displayPinWrite( DISPLAY_PIN_D1, dataBus & 0b00000010 );      
-    displayPinWrite( DISPLAY_PIN_D0, dataBus & 0b00000001 );
+    switch( display.connection ) {
+        case DISPLAY_CONNECTION_GPIO_8BITS:
+            displayPinWrite( DISPLAY_PIN_D3, dataBus & 0b00001000 );
+            displayPinWrite( DISPLAY_PIN_D2, dataBus & 0b00000100 );  
+            displayPinWrite( DISPLAY_PIN_D1, dataBus & 0b00000010 );      
+            displayPinWrite( DISPLAY_PIN_D0, dataBus & 0b00000001 );
+        break; 
+              
+        case DISPLAY_CONNECTION_GPIO_4BITS:
+            if ( initial8BitCommunicationIsCompleted == true) {
+                displayPinWrite( DISPLAY_PIN_EN, ON );         
+                delay( 1 );
+                displayPinWrite( DISPLAY_PIN_EN, OFF );              
+                delay( 1 );        
+                displayPinWrite( DISPLAY_PIN_D7, dataBus & 0b00001000 );
+                displayPinWrite( DISPLAY_PIN_D6, dataBus & 0b00000100 );  
+                displayPinWrite( DISPLAY_PIN_D5, dataBus & 0b00000010 );      
+                displayPinWrite( DISPLAY_PIN_D4, dataBus & 0b00000001 );                
+            }
+        break;
+    
+    }
     displayPinWrite( DISPLAY_PIN_EN, ON );              
     delay( 1 );
     displayPinWrite( DISPLAY_PIN_EN, OFF );  
