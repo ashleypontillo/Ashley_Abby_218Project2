@@ -172,11 +172,12 @@ static void userInterfaceDisplayUpdate()
 
 static void userInterfaceDisplayPasscode()
 {
+    char passcodeString[4] = "";
     for (int i = 0; i < 4; i++){
-        char passcodeString[1] = "";
         displayCharPositionWrite(i, 1);
         char pressedKey = matrixKeypadUpdate();
         sprintf(passcodeString, "%c", pressedKey);
+        displayStringWrite( passcodeString );
         }   
 }
 
