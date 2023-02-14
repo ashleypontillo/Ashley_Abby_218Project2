@@ -144,19 +144,14 @@ static void userInterfaceDisplayInit()
     displayCharPositionWrite ( 0,0 );
     displayStringWrite( "Enter Passcode" );
 
-    
-    displayCharPositionWrite ( 0,1 );
-    displayStringWrite( "" );
 }
 
 static void userInterfaceDisplayUpdate()
 {
     static int accumulatedDisplayTime = 0; 
-    char codeString[4] = "";
     
     if( accumulatedDisplayTime >=
         DISPLAY_REFRESH_TIME_MS ) {
-            userInterfaceDisplayPasscode();
             if (userInterfaceCodeCompleteRead()){
                 if (incorrectCodeStateRead()){
                     numberTries ++;
@@ -177,24 +172,12 @@ static void userInterfaceDisplayUpdate()
 
 static void userInterfaceDisplayPasscode()
 {
-    static int accumulatedDisplayTime = 0;
-
-    if (accumulatedDisplayTime >= DISPLAY_REFRESH_TIME_MS )
-    {
-        accumulatedDisplayTime = 0;
-
-
-        for (int i = 0; i < 4; i++)
-        {
-            char passcodeString[1] = "";
-            displayCharPositionWrite(i, 1);
-            char pressedKey = matrixKeypadUpdate();
-            sprintf(passcodeString, "%c", pressedKey);
-        }
-        
-    } else {
-        accumulatedDisplayTime = accumulatedDisplayTime + SYSTEM_TIME_INCREMENT_MS;
-    }
+    for (int i = 0; i < 4; i++){
+        char passcodeString[1] = "";
+        displayCharPositionWrite(i, 1);
+        char pressedKey = matrixKeypadUpdate();
+        sprintf(passcodeString, "%c", pressedKey);
+        }   
 }
 
 
