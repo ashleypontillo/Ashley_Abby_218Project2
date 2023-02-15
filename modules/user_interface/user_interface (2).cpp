@@ -39,6 +39,8 @@ static bool systemBlockedState = OFF;
 
 static bool codeComplete = false;
 static int numberOfCodeChars = 0;
+static int numPressedKeys = 0;
+
 
 static int numberTries = 0;
 
@@ -47,6 +49,7 @@ static int numberTries = 0;
 static void userInterfaceMatrixKeypadUpdate();
 static void incorrectCodeIndicatorUpdate();
 static void systemBlockedIndicatorUpdate();
+static void resetCode();
 
 static void userInterfaceDisplayInit();
 static void userInterfaceDisplayUpdate();
@@ -113,10 +116,14 @@ static void userInterfaceMatrixKeypadUpdate()
 
     if( keyReleased != '\0' ) {
 
-        if( sirenStateRead() && !systemBlockedStateRead() ) {
+        if( !systemBlockedStateRead() ) {
             if( !incorrectCodeStateRead() ) {
                 codeSequenceFromUserInterface[numberOfCodeChars] = keyReleased;
                 numberOfCodeChars++;
+
+                displayCharPositionWrite(1,9);
+                displayStringWrite(codeSequenceFromUserInterface);
+
                 if ( numberOfCodeChars >= CODE_NUMBER_OF_KEYS ) {
                     codeComplete = true;
                     numberOfCodeChars = 0;
@@ -137,10 +144,16 @@ static void userInterfaceMatrixKeypadUpdate()
 }
 
 
+static void resetCode(){
+    for(int i=0; i<4; i++){
+        codeSequenceFromUserInterface[i] = '\0';
+    }
+}
+
 static void userInterfaceDisplayInit()
 {
+    resetCode();
     displayInit();
-     
     displayCharPositionWrite ( 0,0 );
     displayStringWrite( "Enter Passcode" );
 
@@ -152,10 +165,12 @@ static void userInterfaceDisplayUpdate()
     
     if( accumulatedDisplayTime >=
         DISPLAY_REFRESH_TIME_MS ) {
+            
             if (userInterfaceCodeCompleteRead()){
                 if (incorrectCodeStateRead()){
                     numberTries ++;
                     userInterfaceDisplayIncorrect();
+                    resetCode();
                 } else if(numberTries > 3){
                     userInterfaceDisplayDisabled();
                 }else {
@@ -170,17 +185,19 @@ static void userInterfaceDisplayUpdate()
     } 
 }
 
+
 static void userInterfaceDisplayPasscode()
 {
-    char passcodeString[4] = "";
-    char pressedKey = matrixKeypadUpdate();
+   char passcodeString[4] = "";
+   //char pressedKey = matrixKeypadUpdate();
 
-    for (int i = 0; i < 4; i++){
-        displayCharPositionWrite(i, 1);
-        char pressedKey = matrixKeypadUpdate();
-        sprintf(passcodeString, "%c", pressedKey);
-        displayStringWrite( passcodeString );
-        }   
+    displayCharPositionWrite(0, 1);
+    //codeSequenceFromUserInterface[numberOfCodeChars];
+    //printf(passcodeString, "%c", pressedKey);
+    displayStringWrite("passcode");
+
+    displayCharPositionWrite(0,9);
+    displayStringWrite(codeSequenceFromUserInterface);
 }
 
 
