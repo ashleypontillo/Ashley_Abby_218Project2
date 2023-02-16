@@ -31,7 +31,7 @@ DigitalOut systemBlockedLed(LED2);
 //=====[Declaration and initialization of public global variables]=============
 
 char codeSequenceFromUserInterface[CODE_NUMBER_OF_KEYS];
-static char codeSequence[CODE_NUMBER_OF_KEYS] = { '1', '1', '1', '1' };
+char codeSequence[CODE_NUMBER_OF_KEYS] = { '1', '1', '1', '1' };
 bool codeMatchFrom( codeOrigin_t codeOrigin );
 
 //=====[Declaration and initialization of private global variables]============
@@ -42,8 +42,8 @@ static bool systemBlockedState = OFF;
 static bool codeComplete = false;
 static int numberOfCodeChars = 0;
 static int numPressedKeys = 0;
-
 static int numberTries = 0;
+static void assignCorrectCodeState();
 
 //=====[Declarations (prototypes) of private functions]========================
 
@@ -150,6 +150,7 @@ static void userInterfaceDisplayUpdate()
         DISPLAY_REFRESH_TIME_MS ) {
             
             if (codeComplete){
+                //assignCorrectCodeState();
                 if (incorrectCodeStateRead()){
                     numberTries ++;
                     userInterfaceDisplayIncorrect();
@@ -169,6 +170,14 @@ static void resetCode(){
     for(int i=0; i<4; i++){
         codeSequenceFromUserInterface[i] = '\0';
     }
+}
+
+static void assignCorrectCodeState(){
+    if (codeMatch(codeSequenceFromUserInterface)){
+        incorrectCodeStateWrite(false);
+        }else {
+            incorrectCodeStateWrite(true);
+        }
 }
 
 static void userInterfaceDisplayIncorrect()
