@@ -34,7 +34,6 @@ DigitalIn keypadColPins[MATRIX_KEYPAD_NUMBER_OF_COLS]  = {PB_12, PB_13, PB_15, P
 
 static matrixKeypadState_t matrixKeypadState;
 static int timeIncrement_ms = 0;
-char codeKeysNumber = 0;
 
 //=====[Declarations (prototypes) of private functions]========================
 
@@ -102,8 +101,6 @@ char matrixKeypadUpdate()
     }
     return keyReleased;
 }
-
-
 
 //=====[Implementations of private functions]==================================
 
