@@ -151,13 +151,13 @@ static void userInterfaceDisplayUpdate()
             
             if (codeComplete){
                 assignCorrectCodeState();
-                if (incorrectCodeStateRead() && numberTries < 3){
+                if (incorrectCodeStateRead() && numberTries < 2){
                     numberTries ++;
                     userInterfaceDisplayIncorrect();
                     delay(2000);
                     userInterfaceInit();
                     userInterfaceUpdate();
-                } else if(numberTries >= 3){
+                } else if(numberTries = 3){
                     userInterfaceDisplayDisabled();
                 }else {
                     userInterfaceDisplayCorrect();
