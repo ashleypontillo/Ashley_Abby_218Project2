@@ -155,9 +155,8 @@ static void userInterfaceDisplayUpdate()
                     numberTries ++;
                     userInterfaceDisplayIncorrect();
                     delay(2000);
-                    //userInterfaceDisplayInit();
-                    //userInterfaceMatrixKeypadUpdate();
-                    //userInterfaceDisplayUpdate();
+                    userInterfaceInit();
+                    userInterfaceUpdate();
                 } else if(numberTries >= 3){
                     userInterfaceDisplayDisabled();
                 }else {
@@ -174,6 +173,8 @@ static void resetCode(){
     for(int i=0; i<4; i++){
         codeSequenceFromUserInterface[i] = '\0';
     }
+    codeComplete = false;
+    incorrectCodeStateWrite(false);
 }
 
 static void assignCorrectCodeState(){
