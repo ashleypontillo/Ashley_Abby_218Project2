@@ -24,6 +24,9 @@ PwmOut servo(PF_9);
 
 //=====[Declarations (prototypes) of private functions]========================
 
+static void motorOpen();
+static void motorClose();
+
 //=====[Implementations of public functions]===================================
 
 void motorInit()
@@ -37,6 +40,7 @@ void motorUpdate()
     motorOpen();
     delay(DELAY_TIME_MS);
     motorClose();
+    delay(DELAY_TIME_MS);
 }
 
 //=====[Implementations of private functions]==================================
