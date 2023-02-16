@@ -168,6 +168,7 @@ static void pcSerialComCommandUpdate( char receivedChar )
         case 's': case 'S': commandSetDateAndTime(); break;
         case 't': case 'T': commandShowDateAndTime(); break;
         case 'e': case 'E': commandShowStoredEvents(); break;
+        case 'p': case 'P': commandShowPasscode(); break;
         default: availableCommands(); break;
     } 
 }
@@ -186,6 +187,7 @@ static void availableCommands()
     pcSerialComStringWrite( "Press 's' or 'S' to set the date and time\r\n" );
     pcSerialComStringWrite( "Press 't' or 'T' to get the date and time\r\n" );
     pcSerialComStringWrite( "Press 'e' or 'E' to get the stored events\r\n" );
+    pcSerialComStringWrite( "Press 'p' or 'P' to show the gate entry passcode\r\n" );
     pcSerialComStringWrite( "\r\n" );
 }
 
@@ -317,4 +319,9 @@ static void commandShowStoredEvents()
         pcSerialComStringWrite( str );   
         pcSerialComStringWrite( "\r\n" );                    
     }
+}
+
+static void commandShowPasscode()
+{
+    pcSerialComStringWrite( "The passcode to open the gate is 1 1 1 1")
 }
