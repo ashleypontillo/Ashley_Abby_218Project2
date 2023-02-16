@@ -34,7 +34,7 @@ char codeSequenceFromUserInterface[CODE_NUMBER_OF_KEYS];
 
 //=====[Declaration and initialization of private global variables]============
 
-static bool incorrectCodeState = OFF;
+static bool incorrectCodeState = ON;
 static bool systemBlockedState = OFF;
 
 static bool codeComplete = false;
@@ -53,7 +53,6 @@ static void resetCode();
 
 static void userInterfaceDisplayInit();
 static void userInterfaceDisplayUpdate();
-static void userInterfaceDisplayPasscode();
 static void userInterfaceDisplayIncorrect();
 static void userInterfaceDisplayCorrect();
 static void userInterfaceDisplayDisabled();
@@ -121,7 +120,7 @@ static void userInterfaceMatrixKeypadUpdate()
                 codeSequenceFromUserInterface[numberOfCodeChars] = keyReleased;
                 numberOfCodeChars++;
 
-                displayCharPositionWrite(1,9);
+                displayCharPositionWrite(0,1);
                 displayStringWrite(codeSequenceFromUserInterface);
 
                 if ( numberOfCodeChars >= CODE_NUMBER_OF_KEYS ) {
@@ -140,13 +139,6 @@ static void userInterfaceMatrixKeypadUpdate()
                 }
             }
         }
-    }
-}
-
-
-static void resetCode(){
-    for(int i=0; i<4; i++){
-        codeSequenceFromUserInterface[i] = '\0';
     }
 }
 
@@ -176,30 +168,18 @@ static void userInterfaceDisplayUpdate()
                 }else {
                     userInterfaceDisplayCorrect();
                 } 
-            } else {
-                userInterfaceDisplayPasscode();
-            }
+            } 
     } else {
         accumulatedDisplayTime =
             accumulatedDisplayTime + SYSTEM_TIME_INCREMENT_MS;        
     } 
 }
 
-
-static void userInterfaceDisplayPasscode()
-{
-   char passcodeString[4] = "";
-   //char pressedKey = matrixKeypadUpdate();
-
-    displayCharPositionWrite(0, 1);
-    //codeSequenceFromUserInterface[numberOfCodeChars];
-    //printf(passcodeString, "%c", pressedKey);
-    displayStringWrite("passcode");
-
-    displayCharPositionWrite(0,9);
-    displayStringWrite(codeSequenceFromUserInterface);
+static void resetCode(){
+    for(int i=0; i<4; i++){
+        codeSequenceFromUserInterface[i] = '\0';
+    }
 }
-
 
 static void userInterfaceDisplayIncorrect()
 {
