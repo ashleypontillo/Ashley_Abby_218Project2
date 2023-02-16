@@ -31,16 +31,17 @@ DigitalOut systemBlockedLed(LED2);
 //=====[Declaration and initialization of public global variables]=============
 
 char codeSequenceFromUserInterface[CODE_NUMBER_OF_KEYS];
+static char codeSequence[CODE_NUMBER_OF_KEYS] = { '1', '1', '1', '1' };
+bool codeMatchFrom( codeOrigin_t codeOrigin );
 
 //=====[Declaration and initialization of private global variables]============
 
-static bool incorrectCodeState = ON;
+static bool incorrectCodeState = OFF;
 static bool systemBlockedState = OFF;
 
 static bool codeComplete = false;
 static int numberOfCodeChars = 0;
 static int numPressedKeys = 0;
-
 
 static int numberTries = 0;
 
@@ -115,8 +116,8 @@ static void userInterfaceMatrixKeypadUpdate()
 
     if( keyReleased != '\0' ) {
 
-        if( !systemBlockedStateRead() ) {
-            if( !incorrectCodeStateRead() ) {
+        if( true ) { //!systemBlockedStateRead()
+            if( !incorrectCodeStateRead() ) { 
                 codeSequenceFromUserInterface[numberOfCodeChars] = keyReleased;
                 numberOfCodeChars++;
 
@@ -126,18 +127,8 @@ static void userInterfaceMatrixKeypadUpdate()
                 if ( numberOfCodeChars >= CODE_NUMBER_OF_KEYS ) {
                     codeComplete = true;
                     numberOfCodeChars = 0;
-                }
-            } else {
-                if( keyReleased == '#' ) {
-                    numberOfHashKeyReleased++;
-                    if( numberOfHashKeyReleased >= 2 ) {
-                        numberOfHashKeyReleased = 0;
-                        numberOfCodeChars = 0;
-                        codeComplete = false;
-                        incorrectCodeState = OFF;
-                    }
-                }
-            }
+                } 
+            } 
         }
     }
 }
@@ -158,11 +149,10 @@ static void userInterfaceDisplayUpdate()
     if( accumulatedDisplayTime >=
         DISPLAY_REFRESH_TIME_MS ) {
             
-            if (userInterfaceCodeCompleteRead()){
+            if (codeComplete){
                 if (incorrectCodeStateRead()){
                     numberTries ++;
                     userInterfaceDisplayIncorrect();
-                    resetCode();
                 } else if(numberTries > 3){
                     userInterfaceDisplayDisabled();
                 }else {
@@ -193,7 +183,7 @@ static void userInterfaceDisplayIncorrect()
     displayStringWrite( "Tries: ");
 
 
-    sprintf(numberTriesString, "%c", numberTries);
+    sprintf(numberTriesString, "%i", numberTries);
     displayCharPositionWrite ( 7, 1 );
     displayStringWrite( numberTriesString );
 }
