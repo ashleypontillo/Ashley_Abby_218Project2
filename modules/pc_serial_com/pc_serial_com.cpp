@@ -323,5 +323,5 @@ static void commandShowStoredEvents()
 
 static void commandShowPasscode()
 {
-    pcSerialComStringWrite( "The passcode to open the gate is 1 1 1 1")
+    pcSerialComStringWrite( "The passcode to open the gate is 1 1 1 1");
 }
