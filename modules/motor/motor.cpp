@@ -39,19 +39,6 @@ void motorUpdate()
     motorClose();
 }
 
-int main()
-{
-    servo.period(PERIOD);
-    servo.write(DUTY_MIN);
-
-    while (true) {
-        servo.write(DUTY_MIN);
-        delay(DELAY_TIME_MS);
-        servo.write(DUTY_MAX);
-        delay(DELAY_TIME_MS);
-    }
-}
-
 //=====[Implementations of private functions]==================================
 
 static void motorOpen()
