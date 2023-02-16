@@ -14,6 +14,7 @@
 #include "gas_sensor.h"
 #include "matrix_keypad.h"
 #include "display.h"
+#include "motor.h"
 
 //=====[Declaration of private defines]========================================
 
@@ -157,10 +158,11 @@ static void userInterfaceDisplayUpdate()
                     delay(2000);
                     userInterfaceInit();
                     userInterfaceUpdate();
-                } else if(numberTries = 3){
+                } else if(numberTries >= 3){
                     userInterfaceDisplayDisabled();
                 }else {
                     userInterfaceDisplayCorrect();
+                    motorUpdate();
                 } 
             } 
     } else {
@@ -206,7 +208,7 @@ static void userInterfaceDisplayIncorrect()
 static void userInterfaceDisplayCorrect()
 {
     displayCharPositionWrite ( 0, 0 );
-    displayStringWrite( "Correct Code" );
+    displayStringWrite( "Correct Code. " );
 
 
     displayCharPositionWrite ( 0, 1 );
@@ -216,9 +218,10 @@ static void userInterfaceDisplayCorrect()
 
 static void userInterfaceDisplayDisabled()
 {
+    char numberTriesString[1] = "";
+
     displayCharPositionWrite ( 0, 0 );
     displayStringWrite( "Gate is Disabled" );
-
 
     displayCharPositionWrite ( 0, 1 );
     displayStringWrite( "Reset System" );
