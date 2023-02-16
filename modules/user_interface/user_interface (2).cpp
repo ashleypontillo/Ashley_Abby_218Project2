@@ -150,10 +150,14 @@ static void userInterfaceDisplayUpdate()
         DISPLAY_REFRESH_TIME_MS ) {
             
             if (codeComplete){
-                //assignCorrectCodeState();
+                assignCorrectCodeState();
                 if (incorrectCodeStateRead()){
                     numberTries ++;
                     userInterfaceDisplayIncorrect();
+                    delay(5000);
+                    //userInterfaceDisplayInit();
+                    //userInterfaceMatrixKeypadUpdate();
+                    //userInterfaceDisplayUpdate();
                 } else if(numberTries > 3){
                     userInterfaceDisplayDisabled();
                 }else {
