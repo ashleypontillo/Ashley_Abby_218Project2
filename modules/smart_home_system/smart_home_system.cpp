@@ -9,6 +9,8 @@
 #include "fire_alarm.h"
 #include "pc_serial_com.h"
 #include "event_log.h"
+#include "motor.h"
+
 
 //=====[Declaration of private defines]========================================
 
@@ -31,6 +33,7 @@ void smartHomeSystemInit()
     userInterfaceInit();
     fireAlarmInit();
     pcSerialComInit();
+    motorInit();
 }
 
 void smartHomeSystemUpdate()
