@@ -26,11 +26,10 @@ extern char codeSequenceFromPcSerialCom[CODE_NUMBER_OF_KEYS];
 //=====[Declaration and initialization of private global variables]============
 
 static int numberOfIncorrectCodes = 0;
-static char codeSequence[CODE_NUMBER_OF_KEYS] = { '1', '8', '0', '5' };
+static char codeSequence[CODE_NUMBER_OF_KEYS] = { '1', '1', '1', '1' };
 
 //=====[Declarations (prototypes) of private functions]========================
 
-static bool codeMatch( char* codeToCompare );
 static void codeDeactivate();
 
 //=====[Implementations of public functions]===================================
@@ -89,7 +88,7 @@ bool codeMatchFrom( codeOrigin_t codeOrigin )
 
 //=====[Implementations of private functions]==================================
 
-static bool codeMatch( char* codeToCompare )
+bool codeMatch( char* codeToCompare )
 {
     int i;
     for (i = 0; i < CODE_NUMBER_OF_KEYS; i++) {
