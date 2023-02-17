@@ -14,7 +14,7 @@ motor
     
 Modules edited:
 
-matrix_keypad, smart_home_system, user_interface, serial_communication, code
+smart_home_system, user_interface, serial_communication, code
     
     
 Note about Demonstation Video:
